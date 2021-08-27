@@ -40,12 +40,22 @@ namespace ChartApp
             Program.ChartActors.Terminate();
         }
 
+
         #endregion
 
-        private void btAddSeries_Click(object sender, EventArgs e)
+        private void btnCpu_Click(object sender, EventArgs e)
         {
-            var series = ChartDataHelper.RandomSeries("Fake Series" + _seriesCounter.GetAndIncrement());
-            _chartActor.Tell(new ChartingActor.AddSeries(series));
+
+        }
+
+        private void btnMemory_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDisk_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

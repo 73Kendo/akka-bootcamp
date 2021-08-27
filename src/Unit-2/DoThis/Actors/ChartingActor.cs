@@ -30,11 +30,31 @@ namespace ChartApp.Actors
             }
             public Series Series { get; private set; }
         }
-            
+        /// <summary>
+        /// Remove an existing <see cref="Series"/> from the chart
+        /// </summary>
+        public class RemoveSeries
+        {
+            public RemoveSeries(string seriesName)
+            {
+                SeriesName = seriesName;
+            }
+
+            public string SeriesName { get; private set; }
+        }
         #endregion
 
         private readonly Chart _chart;
         private Dictionary<string, Series> _seriesIndex;
+        
+        /// <summary>
+        /// Maximum number of points we will allow in a series
+        /// </summary>
+        public const int MaxPoints = 250;
+        /// <summary>
+        /// Incrementing counter we use to plot along he X-axis
+        /// </summary>
+        private int xPosCounter = 0;
 
         public ChartingActor(Chart chart) : this(chart, new Dictionary<string, Series>())
         {
@@ -48,7 +68,24 @@ namespace ChartApp.Actors
             Receive<AddSeries>(addSeries => HandleAddSeries(addSeries));
         }
 
-
+        private void SetChartBoundaries()
+        {
+            double maxAxisX, maxAxisY, minAxisX, minAxisY = 0.0d;
+            var allPoints = _seriesIndex.Values.SelectMany(series => series.Points).ToList();
+            var yValues = allPoints.SelectMany(point => point.YValues).ToList();
+            maxAxisX = xPosCounter;
+            minAxisX = xPosCounter - MaxPoints;
+            maxAxisY = yValues.Count > 0 ? Math.Ceiling(yValues.Max()) : 1.0d;
+            minAxisY = yValues.Count > 0 ? Math.Floor(yValues.Min()) : 0.0d;
+            if (allPoints.Count > 2)
+            {
+                var area = _chart.ChartAreas[0];
+                area.AxisX.Minimum = minAxisX;
+                area.AxisX.Maximum = maxAxisX;
+                area.AxisY.Minimum = minAxisY;
+                area.AxisY.Maximum = maxAxisY;
+            }
+        }
 
         #region Individual Message Type Handlers
 
