@@ -46,7 +46,7 @@ namespace ChartApp.Actors
 
         private readonly Chart _chart;
         private Dictionary<string, Series> _seriesIndex;
-        
+
         /// <summary>
         /// Maximum number of points we will allow in a series
         /// </summary>
@@ -59,7 +59,7 @@ namespace ChartApp.Actors
         public ChartingActor(Chart chart) : this(chart, new Dictionary<string, Series>())
         {
         }
-
+        
         public ChartingActor(Chart chart, Dictionary<string, Series> seriesIndex)
         {
             _chart = chart;
@@ -93,34 +93,68 @@ namespace ChartApp.Actors
         {
             if (ic.InitialSeries != null)
             {
-                //swap the two series out
+                // swap the two series out
                 _seriesIndex = ic.InitialSeries;
             }
 
-            //delete any existing series
+            // delete any existing series
             _chart.Series.Clear();
 
-            //attempt to render the initial chart
+            // set the axes up
+            var area = _chart.ChartAreas[0];
+            area.AxisX.IntervalType = DateTimeIntervalType.Number;
+            area.AxisY.IntervalType = DateTimeIntervalType.Number;
+
+            SetChartBoundaries();
+
+            // attempt to render the initial chart
             if (_seriesIndex.Any())
             {
                 foreach (var series in _seriesIndex)
                 {
-                    //force both the chart and the internal index to use the same names
+                    // force both the chart and the internal index to use the same names
                     series.Value.Name = series.Key;
                     _chart.Series.Add(series.Value);
                 }
             }
-        }
 
+            SetChartBoundaries();
+        }
 
         private void HandleAddSeries(AddSeries series)
         {
-            if(!string.IsNullOrEmpty(series.Series.Name)&& !_seriesIndex.ContainsKey(series.Series.Name))
+            if (!string.IsNullOrEmpty(series.Series.Name) &&
+                !_seriesIndex.ContainsKey(series.Series.Name))
             {
                 _seriesIndex.Add(series.Series.Name, series.Series);
                 _chart.Series.Add(series.Series);
+                SetChartBoundaries();
             }
         }
-        #endregion
+
+        private void HandleRemoveSeries(RemoveSeries series)
+        {
+            if (!string.IsNullOrEmpty(series.SeriesName) &&
+                _seriesIndex.ContainsKey(series.SeriesName))
+            {
+                var seriesToRemove = _seriesIndex[series.SeriesName];
+                _seriesIndex.Remove(series.SeriesName);
+                _chart.Series.Remove(seriesToRemove);
+                SetChartBoundaries();
+            }
+        }
+
+        private void HandleMetrics(Metric metric)
+        {
+            if (!string.IsNullOrEmpty(metric.Series) &&
+                _seriesIndex.ContainsKey(metric.Series))
+            {
+                var series = _seriesIndex[metric.Series];
+                series.Points.AddXY(xPosCounter++, metric.CounterValue);
+                while (series.Points.Count > MaxPoints) series.Points.RemoveAt(0);
+                SetChartBoundaries();
+            }
+            #endregion
+        }
     }
 }

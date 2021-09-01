@@ -47,10 +47,10 @@ namespace ChartApp.Actors
         /// </summary>
         private static readonly Dictionary<CounterType, Func<PerformanceCounter>> CounterGeneartors = new Dictionary<CounterType, Func<PerformanceCounter>>()
             {
-            {CounterType.Cpu,()=>new PerformanceCounter("Processsor","% Process Time","_Total",true) },
-            {CounterType.Memory,()=> new PerformanceCounter("Memory","% Committed Bytes In Use", true) },
-            {CounterType.Disk,()=> new PerformanceCounter("LogicalDisk","% Disk Time","_Total",true) }
 
+            {CounterType.Cpu, () => new PerformanceCounter("Processor", "% Processor Time", "_Total", true)},
+            {CounterType.Memory, () => new PerformanceCounter("Memory", "% Committed Bytes In Use", true)},
+            {CounterType.Disk, () => new PerformanceCounter("LogicalDisk", "% Disk Time", "_Total", true)},
             };
 
         /// <summary>

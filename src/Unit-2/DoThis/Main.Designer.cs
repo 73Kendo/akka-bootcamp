@@ -28,10 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            this.sysChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.btnCpu = new System.Windows.Forms.Button();
             this.btnMemory = new System.Windows.Forms.Button();
             this.btnDisk = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // sysChart
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.sysChart.ChartAreas.Add(chartArea2);
+            this.sysChart.Dock = System.Windows.Forms.DockStyle.Fill;
+            legend2.Name = "Legend1";
+            this.sysChart.Legends.Add(legend2);
+            this.sysChart.Location = new System.Drawing.Point(0, 0);
+            this.sysChart.Name = "sysChart";
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.sysChart.Series.Add(series2);
+            this.sysChart.Size = new System.Drawing.Size(684, 446);
+            this.sysChart.TabIndex = 0;
+            this.sysChart.Text = "sysChart";
             // 
             // btnCpu
             // 
